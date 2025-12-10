@@ -1,0 +1,221 @@
+{
+  "1": {
+    "inputs": {
+      "image": "background.png"
+    },
+    "class_type": "LoadImage",
+    "is_changed": true
+  },
+  "2": {
+    "inputs": {
+      "image": "background_mask.png"
+    },
+    "class_type": "LoadImage",
+    "is_changed": true
+  },
+  "3": {
+    "inputs": {
+      "image": "product.png"
+    },
+    "class_type": "LoadImage",
+    "is_changed": true
+  },
+  "4": {
+    "inputs": {
+      "ckpt_name": "sd_xl_base_1.0.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "is_changed": true
+  },
+  "5": {
+    "inputs": {
+      "text": "product photo, realistic lighting, studio quality, matches background perspective",
+      "clip": [
+        "4",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "is_changed": true
+  },
+  "6": {
+    "inputs": {
+      "text": "blurry, distorted, extra limbs, watermark, text, overexposed, underexposed",
+      "clip": [
+        "4",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "is_changed": true
+  },
+  "7": {
+    "inputs": {
+      "pixels": [
+        "1",
+        0
+      ],
+      "mask": [
+        "2",
+        1
+      ],
+      "vae": [
+        "4",
+        2
+      ]
+    },
+    "class_type": "VAEEncodeForInpaint",
+    "is_changed": true
+  },
+  "8": {
+    "inputs": {
+      "clip_name": "clip_vision_g.safetensors"
+    },
+    "class_type": "CLIPVisionModelLoader",
+    "is_changed": true
+  },
+  "9": {
+    "inputs": {
+      "ipadapter_file": "ip-adapter-plus_sdxl_vit-h.safetensors",
+      "clip_vision": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "IPAdapterModelLoader",
+    "is_changed": true
+  },
+  "10": {
+    "inputs": {
+      "weight": 0.9,
+      "weight_type": "original",
+      "combine_embeds": "concat",
+      "start_at": 0,
+      "end_at": 1,
+      "model": [
+        "4",
+        0
+      ],
+      "ipadapter": [
+        "9",
+        0
+      ],
+      "image": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "IPAdapterApply",
+    "is_changed": true
+  },
+  "11": {
+    "inputs": {
+      "seed": 123456,
+      "steps": 28,
+      "cfg": 6.5,
+      "sampler_name": "dpmpp_2m",
+      "scheduler": "karras",
+      "denoise": 1,
+      "model": [
+        "10",
+        0
+      ],
+      "positive": [
+        "5",
+        0
+      ],
+      "negative": [
+        "6",
+        0
+      ],
+      "latent_image": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "is_changed": true
+  },
+  "12": {
+    "inputs": {
+      "ckpt_name": "sd_xl_refiner_1.0.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "is_changed": true
+  },
+  "13": {
+    "inputs": {
+      "text": "product photo, realistic lighting, studio quality, matches background perspective",
+      "clip": [
+        "12",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "is_changed": true
+  },
+  "14": {
+    "inputs": {
+      "text": "blurry, distorted, extra limbs, watermark, text, overexposed, underexposed",
+      "clip": [
+        "12",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "is_changed": true
+  },
+  "15": {
+    "inputs": {
+      "seed": 123456,
+      "steps": 12,
+      "cfg": 5.5,
+      "sampler_name": "dpmpp_sde",
+      "scheduler": "karras",
+      "denoise": 0.35,
+      "model": [
+        "12",
+        0
+      ],
+      "positive": [
+        "13",
+        0
+      ],
+      "negative": [
+        "14",
+        0
+      ],
+      "latent_image": [
+        "11",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "is_changed": true
+  },
+  "16": {
+    "inputs": {
+      "samples": [
+        "15",
+        0
+      ],
+      "vae": [
+        "12",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "is_changed": true
+  },
+  "17": {
+    "inputs": {
+      "filename_prefix": "product_on_background",
+      "images": [
+        "16",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "is_changed": true
+  }
+}
