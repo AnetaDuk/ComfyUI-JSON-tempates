@@ -2,7 +2,7 @@
 
 Repozytorium zawiera gotowe do załadowania do ComfyUI szablony w formacie JSON. Każdy plik opisuje kompletne drzewo nodów wraz z parametrami, tak aby po wczytaniu w UI od razu móc podstawić własne obrazy i prompty.
 
-- **templates/product_background_inpaint.json** – szablon do realistycznego wstawiania produktu na wskazane tło z użyciem maski pod inpaint.
+- **templates/product_background_inpaint.json** – szablon do realistycznego wstawiania produktu na wskazane tło z użyciem maski pod inpaint. Używa wyłącznie bazowych nodów dostępnych w ComfyUI Cloud (bez dodatkowych rozszerzeń).
 - Więcej informacji o darmowych modelach i partnerach znajdziesz w [`docs/models.md`](docs/models.md).
 
 ## Jak pobrać pliki z repozytorium
@@ -16,27 +16,23 @@ Repozytorium zawiera gotowe do załadowania do ComfyUI szablony w formacie JSON.
   Upewnij się, że ścieżki katalogów istnieją przed zapisem.
 
 ## Jak używać szablonu wstawiania produktu
-1. Pobierz wymagane modele (wszystkie darmowe):
+1. Pobierz wymagane modele (wszystkie darmowe i dostępne w ComfyUI Cloud):
    - `sd_xl_base_1.0.safetensors` (checkpoint bazowy SDXL 1.0)
    - `sd_xl_refiner_1.0.safetensors` (opcjonalny refiner SDXL 1.0)
-   - `ip-adapter-plus_sdxl_vit-h.safetensors` (IP-Adapter Plus dla SDXL)
-   - `clip_vision_g.safetensors` (CLIP Vision G dla IP-Adaptera)
-   Umieść je w katalogu z modelami ComfyUI (np. `models/checkpoints/`, `models/clip_vision/`, `models/ipadapter/`).
+   Umieść je w katalogu z modelami ComfyUI (np. `models/checkpoints/`).
 2. Przygotuj pliki wejściowe w tej samej ścieżce co ComfyUI:
    - `background.png` – tło, na które chcesz wstawić produkt.
    - `background_mask.png` – czarno-biała maska z zaznaczoną przestrzenią na produkt (biały = miejsce do wypełnienia). Możesz ją przygotować w dowolnym edytorze lub z narzędzi do segmentacji.
-   - `product.png` – zdjęcie referencyjne produktu. Najlepiej, jeśli ma przezroczyste tło albo jednolite, łatwe do odczytania kontury.
-   - Opcjonalnie `background_mask_preview.png` – szybki render maski na tle (np. z Photoshopa/GIMPa), żeby łatwiej wybrać poprawny rozmiar i pozycję.
+   - Opcjonalnie `product_reference.png` – zdjęcie produktu do podglądu ręcznego; w wersji cloud workflow nie wykorzystuje IP-Adaptera, więc opis produktu dodaj w promptach.
 3. W ComfyUI wybierz **Load** i wskaż plik `templates/product_background_inpaint.json`.
-4. Podmień ścieżki do obrazów w nodach `LoadImage` oraz dopasuj prompt w nodach `CLIPTextEncode` (dodatni i ujemny).
-5. Uruchom workflow. Maska kontroluje skalę i pozycję produktu, a IP-Adapter dba o zachowanie jego wyglądu.
-   - Jeśli produkt wychodzi zbyt mały/duży, poszerz lub zwęź białą część maski i ponownie uruchom workflow – proporcje produktu zostaną zachowane przez IP-Adapter.
-   - Do precyzyjnych poprawek krawędzi maski możesz dodać nod `Erode`/`Dilate` między `LoadImage` maski a `VAEEncodeForInpaint`.
+4. Podmień ścieżki do obrazów w nodach `LoadImage` oraz dopasuj prompt w nodach `CLIPTextEncode` (dodatni i ujemny) tak, aby dokładnie opisać produkt z referencji.
+5. Uruchom workflow. Maska kontroluje skalę i pozycję produktu, a prompt opisuje wygląd. W razie potrzeby poszerz lub zwęź białą część maski i uruchom ponownie.
+   - Do precyzyjnych poprawek krawędzi maski możesz dodać nod `Erode`/`Dilate` między `LoadImage` maski a `VAEEncodeForInpaint` (również dostępne w cloud).
 
 ## Dlaczego ten zestaw?
-- SDXL 1.0 w trybie inpaint daje fotorealistyczny blend z tłem.
+- SDXL 1.0 w trybie inpaint daje fotorealistyczny blend z tłem przy użyciu wyłącznie bazowych nodów.
 - Refiner SDXL poprawia detale krawędzi i integrację z tłem (można go pominąć, jeśli chcesz szybsze wyniki).
-- IP-Adapter Plus (SDXL) przenosi cechy produktu z referencji bez dodatkowych kredytów.
+- Brak zależności od niestandardowych nodów (np. IP-Adapter), więc workflow działa od razu w ComfyUI Cloud.
 
 ## Unikanie modeli płatnych
 Szablon korzysta wyłącznie z modeli dostępnych za darmo do pobrania. W ustawieniach ComfyUI Managera unikaj pozycji oznaczonych jako **Partner** lub wymagających kredytów (np. modele hostowane w chmurze). Zamiast tego używaj lokalnych checkpointów wymienionych powyżej.

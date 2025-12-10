@@ -1,11 +1,12 @@
 # Modele do ComfyUI: darmowe vs partner/płatne
 
-## Najlepsze darmowe modele do fotorealistycznego compositingu
+## Najlepsze darmowe modele do fotorealistycznego compositingu (cloud-friendly)
 - **Stable Diffusion XL Base 1.0 (`sd_xl_base_1.0.safetensors`)** – uniwersalny checkpoint do generacji i inpaintingu w wysokiej jakości.
 - **Stable Diffusion XL Refiner 1.0 (`sd_xl_refiner_1.0.safetensors`)** – drugi etap poprawiający detale i faktury; działa na tym samym latencie, więc nie wymaga nowych promptów.
 - **SDXL Inpainting (np. `sd_xl_base_1.0` + `VAEEncodeForInpaint`)** – tryb inpaint w ComfyUI wykorzystuje ten sam checkpoint bazowy, więc nie potrzebujesz osobnego płatnego modelu.
-- **IP-Adapter Plus SDXL (`ip-adapter-plus_sdxl_vit-h.safetensors`)** – darmowy adapter do zachowania cech produktu z referencji. Wymaga modelu **CLIP Vision G (`clip_vision_g.safetensors`)**, który również jest bezpłatny.
+  - W ComfyUI Cloud standardowe nody inpaint są dostępne od razu, bez instalacji rozszerzeń.
 
+- **IP-Adapter/CLIP Vision** – w wersji cloud często niedostępne bez dodatkowych kredytów lub instalacji niestandardowych nodów, dlatego szablon ich nie używa.
 ## Typowe modele/źródła, które konsumują kredyty (unikać w tym workflow)
 - Pozycje oznaczone w ComfyUI Managerze jako **Partner** lub **Cloud** (np. modele hostowane na RunDiffusion, Together, Replicate). Zwykle wymagają płatnych kredytów za inferencję.
 - Komercyjne/limitowane checkpointy typu **FLUX** czy **Playground v2.5** dostępne poprzez chmurowych dostawców – bez lokalnego pliku nie uruchomisz ich bez opłat.
